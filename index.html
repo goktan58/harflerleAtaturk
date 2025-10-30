@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Atatürk</title>
+  <style>
+    :root { --bg:#0e0f12; --fg:#e6e6e6; --muted:#8a8f99; --card:#12151b; --stroke:#1e2430; }
+    * { box-sizing: border-box; }
+    html,body { height:100%; margin:0; background:var(--bg); color:var(--fg); font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial; }
+    .app {
+      display:grid;
+      grid-template-columns: 1fr 2fr;   /* 1/3 - 2/3 */
+      grid-template-rows: 100vh;
+      gap: 0;
+    }
+    .left {
+      padding: 20px;
+      border-right:1px solid var(--stroke);
+      background: linear-gradient(180deg,#0f1116 0%,#0c0d11 100%);
+      display:flex; flex-direction:column; gap:16px;
+    }
+    h1 {
+      margin: 0 0 4px 0;
+      font-size: 22px;
+      letter-spacing:.3px;
+    }
+    .sub {
+      margin:0 0 8px 0; font-size:12px; color:var(--muted);
+    }
+    .card {
+      background: var(--card);
+      border:1px solid var(--stroke);
+      border-radius:14px;
+      padding:14px;
+      display:flex; flex-direction:column; gap:12px;
+    }
+    textarea {
+      width:100%;
+      min-height: 38vh;                 /* büyük metin alanı */
+      resize: vertical;
+      background:#0d1117;
+      color:var(--fg);
+      border:1px solid #202634;
+      border-radius:12px;
+      padding:12px 14px;
+      line-height:1.5;
+      font-size:15px;
+    }
+    .controls { display:flex; gap:10px; flex-wrap:wrap; }
+    button {
+      padding:10px 14px;
+      border-radius:10px;
+      border:1px solid #2a2f39;
+      background:#1b2230;
+      color:var(--fg);
+      cursor:pointer;
+      font-weight:600;
+    }
+    button:hover { background:#232c3e; }
+    .hint { font-size:12px; color:var(--muted); }
+    .right {
+      position:relative;
+      display:flex; align-items:stretch; justify-content:stretch;
+      background:#0b0d12;
+    }
+    canvas { width:100%; height:100%; display:block; }
+    .topbar {
+      display:flex; justify-content:space-between; align-items:center;
+      gap:10px;
+    }
+    .badge {
+      display:inline-block; padding:6px 10px; border-radius:999px;
+      border:1px solid #263043; background:#121a27; color:#cfd6e4; font-size:12px;
+    }
+
+    @media (max-width: 960px){
+      .app{ grid-template-columns: 1fr; grid-template-rows: auto 60vh; }
+      .right{ height:60vh; }
+      textarea{ min-height: 24vh; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- SOL (1/3) -->
+    <section class="left">
+      <div>
+        <h1>harflerle Atatürk</h1>
+        <p class="sub">Metindeki harfler, <strong>Atatürk</strong> görselinin şeklini alır.</p>
+      </div>
+
+      <div class="card">
+        <label for="textInput" class="hint">Metin (harfler buradan alınır):</label>
+        <textarea id="textInput" placeholder="Metni yazın..."> Ey Türk gençliği! Birinci vazifen; Türk istiklalini, Türk cumhuriyetini, ilelebet muhafaza ve müdafaa etmektir.
+
+   Mevcudiyetinin ve istikbalinin yegâne temeli budur. Bu temel, senin en kıymetli hazinendir. İstikbalde dahi seni bu hazineden mahrum etmek isteyecek dâhilî ve haricî bedhahların olacaktır. Bir gün, istiklal ve cumhuriyeti müdafaa mecburiyetine düşersen, vazifeye atılmak için içinde bulunacağın vaziyetin imkân ve şeraitini düşünmeyeceksin. Bu imkân ve şerait, çok namüsait bir mahiyette tezahür edebilir. İstiklal ve cumhuriyetine kastedecek düşmanlar, bütün dünyada emsali görülmemiş bir galibiyetin mümessili olabilirler. Cebren ve hile ile aziz vatanın bütün kaleleri zapt edilmiş, bütün tersanelerine girilmiş, bütün orduları dağıtılmış ve memleketin her köşesi bilfiil işgal edilmiş olabilir. Bütün bu şeraitten daha elim ve daha vahim olmak üzere, memleketin dâhilinde iktidara sahip olanlar, gaflet ve dalalet ve hatta hıyanet içinde bulunabilirler. Hatta bu iktidar sahipleri, şahsi menfaatlerini müstevlilerin siyasi emelleriyle tevhit edebilirler. Millet, fakruzaruret içinde harap ve bitap düşmüş olabilir.
+
+   Ey Türk istikbalinin evladı! İşte, bu ahval ve şerait içinde dahi vazifen, Türk istiklal ve cumhuriyetini kurtarmaktır. Muhtaç olduğun kudret, damarlarındaki asil kanda mevcuttur.</textarea>
+
+        <div class="controls">
+          <button id="startBtn">Başlat (4 sn)</button>
+          <button id="downloadBtn" title="Oluşan görseli PNG olarak indir">PNG İndir</button>
+          <span class="badge">Hedef: target.jpg</span>
+        </div>
+        <div class="hint">Not: <code>target.jpg</code> bu dosyayla aynı klasörde olmalı. Yüksek kontrastlı görsel en iyi sonucu verir.</div>
+      </div>
+
+      <div class="card" style="gap:8px">
+        <div class="hint">Ayarlar</div>
+        <div class="controls">
+          <label class="hint">Yoğunluk (STEP): <input id="stepInput" type="number" min="4" max="20" value="7" style="width:84px;background:#0d1117;color:var(--fg);border:1px solid #202634;border-radius:8px;padding:6px 8px"></label>
+          <label class="hint">Eşik (THRESH): <input id="threshInput" type="number" min="0" max="255" value="190" style="width:84px;background:#0d1117;color:var(--fg);border:1px solid #202634;border-radius:8px;padding:6px 8px"></label>
+          <label class="hint">Süre (ms): <input id="durInput" type="number" min="500" max="15000" step="100" value="4000" style="width:96px;background:#0d1117;color:var(--fg);border:1px solid #202634;border-radius:8px;padding:6px 8px"></label>
+        </div>
+      </div>
+    </section>
+
+    <!-- SAĞ (2/3) -->
+    <section class="right">
+      <canvas id="cnv"></canvas>
+    </section>
+  </div>
+
+  <script>
+    // ---------- Yerleşim ----------
+    const canvas = document.getElementById('cnv');
+    const ctx = canvas.getContext('2d');
+    const leftPane = document.querySelector('.left');
+    const rightPane = document.querySelector('.right');
+
+    let W=0, H=0, DPR=1;
+    function resizeCanvasToPane(){
+      const r = rightPane.getBoundingClientRect();
+      DPR = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+      canvas.style.width = r.width + 'px';
+      canvas.style.height = r.height + 'px';
+      canvas.width = Math.floor(r.width * DPR);
+      canvas.height = Math.floor(r.height * DPR);
+      ctx.setTransform(DPR,0,0,DPR,0,0);
+      W = Math.floor(r.width);
+      H = Math.floor(r.height);
+      ctx.textBaseline = 'middle';
+      ctx.lineJoin = 'round';
+    }
+    window.addEventListener('resize', resizeCanvasToPane);
+    resizeCanvasToPane();
+
+    // ---------- Elemanlar ----------
+    const textInput = document.getElementById('textInput');
+    const startBtn  = document.getElementById('startBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const stepInput = document.getElementById('stepInput');
+    const threshInput = document.getElementById('threshInput');
+    const durInput = document.getElementById('durInput');
+
+    // ---------- Parametreler ----------
+    let DURATION = +durInput.value || 4000;
+    let STEP     = +stepInput.value || 7;
+    let THRESH   = +threshInput.value || 190;
+    const EASING   = t => 1 - Math.pow(1 - t, 3); // easeOutCubic
+    const MAX_PARTICLES = 20000;
+
+    stepInput.addEventListener('change', ()=> STEP = Math.max(4, +stepInput.value||7));
+    threshInput.addEventListener('change', ()=> THRESH = Math.min(255, Math.max(0, +threshInput.value||190)));
+    durInput.addEventListener('change', ()=> DURATION = Math.min(15000, Math.max(500, +durInput.value||4000)));
+
+    // ---------- Offscreen ----------
+    const off = document.createElement('canvas');
+    const offCtx = off.getContext('2d');
+
+    // ---------- Hedef görüntü ----------
+    let targetImg = null;
+    function loadTarget(){
+      return new Promise((resolve,reject)=>{
+        const img = new Image();
+        img.onload = ()=> resolve(img);
+        img.onerror = ()=> reject(new Error("target.jpg yüklenemedi. Dosyanın bu sayfayla aynı klasörde olduğundan emin olun."));
+        img.src = 'target.jpg'; // aynı origin
+        img.decoding = 'async';
+        img.crossOrigin = 'anonymous'; // aynı origin olduğu sürece sorun olmaz
+      });
+    }
+
+    // ---------- Parçacıklar ----------
+    let particles = [];
+    let animStart = 0;
+    let running = false;
+
+    startBtn.addEventListener('click', async ()=>{
+      const txt = (textInput.value || '').trim();
+      if(!txt){ alert('Lütfen metin giriniz.'); return; }
+
+      try {
+        if(!targetImg) targetImg = await loadTarget();
+        prepareTargetsFromImage(targetImg, txt);
+        startAnimation();
+      } catch(err){
+        alert(err.message || err);
+      }
+    });
+
+    function prepareTargetsFromImage(img, text){
+      // Görseli sağ panel içine orantılı sığdır
+      const scale = Math.min(W / img.width, H / img.height, 1);
+      const drawW = Math.floor(img.width * scale);
+      const drawH = Math.floor(img.height * scale);
+      const dx = Math.floor((W - drawW)/2), dy = Math.floor((H - drawH)/2);
+
+      off.width = drawW; off.height = drawH;
+      offCtx.clearRect(0,0,drawW,drawH);
+      offCtx.drawImage(img, 0, 0, drawW, drawH);
+
+      const { data } = offCtx.getImageData(0,0,drawW,drawH);
+      const pts = [];
+      for(let y=0; y<drawH; y+=STEP){
+        for(let x=0; x<drawW; x+=STEP){
+          const idx = (y*drawW + x)*4;
+          const r=data[idx], g=data[idx+1], b=data[idx+2], a=data[idx+3];
+          if(a<8) continue;
+          const lum = 0.2126*r + 0.7152*g + 0.0722*b;
+          if(lum < THRESH){
+            pts.push({ x: dx+x, y: dy+y, color:`rgb(${r},${g},${b})` });
+          }
+        }
+      }
+      let targets = pts;
+      if(targets.length > MAX_PARTICLES){
+        const ratio = MAX_PARTICLES / targets.length;
+        targets = targets.filter(()=> Math.random() < ratio);
+      }
+
+      const letters = Array.from(text.replace(/\s+/g,' ').trim());
+      const L = Math.max(1, letters.length);
+
+      particles = targets.map((t,i)=>{
+        const ch = letters[i % L];
+        const sx = Math.random()*W, sy = Math.random()*H;
+        return { ch, color:t.color, tx:t.x+(Math.random()*2-1)*0.6, ty:t.y+(Math.random()*2-1)*0.6, sx, sy };
+      });
+    }
+
+    function startAnimation(){
+      running = true;
+      animStart = performance.now();
+      requestAnimationFrame(tick);
+    }
+
+    function tick(now){
+      if(!running) return;
+      const elapsed = now - animStart;
+      const t = Math.min(1, elapsed / DURATION);
+      const e = EASING(t);
+
+      ctx.clearRect(0,0,W,H);
+
+      // Dinamik font ölçüsü: yoğunluğa göre okunabilirlik
+      const fontPx = Math.max(10, STEP + 3);
+      ctx.font = `bold ${fontPx}px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial`;
+      ctx.textAlign = 'center';
+
+      for(const p of particles){
+        const x = p.sx + (p.tx - p.sx) * e;
+        const y = p.sy + (p.ty - p.sy) * e;
+        ctx.fillStyle = p.color;
+        ctx.fillText(p.ch, x, y);
+      }
+
+      if(t<1) requestAnimationFrame(tick);
+      else running = false;
+    }
+
+    // PNG indirme
+    downloadBtn.addEventListener('click', ()=>{
+      if(canvas.width === 0 || canvas.height === 0){
+        alert('Henüz bir görsel oluşturulmadı.');
+        return;
+      }
+      canvas.toBlob(blob=>{
+        if(!blob){ alert('İndirme hazırlanırken bir sorun oluştu.'); return; }
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'harflerle-gorsel.png';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      }, 'image/png', 1.0);
+    });
+
+    // İlk yüklemede hedefi arka planda ısıt
+    loadTarget().then(img=>{ targetImg = img; }).catch(()=>{ /* sessiz geç */ });
+  </script>
+</body>
+</html>
