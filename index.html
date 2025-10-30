@@ -3,59 +3,139 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Atatürk</title>
+  <title>Her Yol Atatürk’e Çıkar — Harflerle Görsel</title>
   <style>
-    :root { --bg:#0c0d10; --fg:#e7e9ee; --muted:#9aa1ad; --stroke:#1a1d24; --card:#11141a; }
-    * { box-sizing:border-box; }
-    html,body{height:100%;margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
-    .app{display:grid;grid-template-columns:1fr 2fr;grid-template-rows:100vh}
-    .left{padding:22px;border-right:1px solid var(--stroke);display:flex;flex-direction:column;gap:14px}
-    h1{margin:0 0 6px 0;font-size:22px;letter-spacing:.2px;font-weight:700}
-    .muted{color:var(--muted);font-size:12px}
-    textarea{width:100%;min-height:40vh;background:#0d1016;color:var(--fg);border:1px solid #202532;border-radius:12px;padding:14px 16px;line-height:1.55;font-size:16px}
-    .actions{display:flex;gap:10px}
-    button{padding:10px 14px;border-radius:10px;border:1px solid #262b37;background:#141a23;color:var(--fg);font-weight:600;cursor:pointer}
-    button:hover{background:#1a2130}
-    .right{position:relative}
-    canvas{width:100%;height:100%;display:block}
-    @media (max-width: 960px){.app{grid-template-columns:1fr;grid-template-rows:auto 60vh}.right{height:60vh}textarea{min-height:28vh}}
+    :root { --bg:#0e0f12; --fg:#e6e6e6; --muted:#8a8f99; --card:#12151b; --stroke:#1e2430; }
+    * { box-sizing: border-box; }
+    html,body { height:100%; margin:0; background:var(--bg); color:var(--fg); font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial; }
+    .app {
+      display:grid;
+      grid-template-columns: 1fr 2fr;   /* 1/3 - 2/3 */
+      grid-template-rows: 100vh;
+      gap: 0;
+    }
+    .left {
+      padding: 20px;
+      border-right:1px solid var(--stroke);
+      background: linear-gradient(180deg,#0f1116 0%,#0c0d11 100%);
+      display:flex; flex-direction:column; gap:16px;
+    }
+    h1 {
+      margin: 0 0 4px 0;
+      font-size: 22px;
+      letter-spacing:.3px;
+    }
+    .sub {
+      margin:0 0 8px 0; font-size:12px; color:var(--muted);
+    }
+    .card {
+      background: var(--card);
+      border:1px solid var(--stroke);
+      border-radius:14px;
+      padding:14px;
+      display:flex; flex-direction:column; gap:12px;
+    }
+    textarea {
+      width:100%;
+      min-height: 38vh;                 /* büyük metin alanı */
+      resize: vertical;
+      background:#0d1117;
+      color:var(--fg);
+      border:1px solid #202634;
+      border-radius:12px;
+      padding:12px 14px;
+      line-height:1.5;
+      font-size:15px;
+    }
+    .controls { display:flex; gap:10px; flex-wrap:wrap; }
+    button {
+      padding:10px 14px;
+      border-radius:10px;
+      border:1px solid #2a2f39;
+      background:#1b2230;
+      color:var(--fg);
+      cursor:pointer;
+      font-weight:600;
+    }
+    button:hover { background:#232c3e; }
+    .hint { font-size:12px; color:var(--muted); }
+    .right {
+      position:relative;
+      display:flex; align-items:stretch; justify-content:stretch;
+      background:#0b0d12;
+    }
+    canvas { width:100%; height:100%; display:block; }
+    .topbar {
+      display:flex; justify-content:space-between; align-items:center;
+      gap:10px;
+    }
+    .badge {
+      display:inline-block; padding:6px 10px; border-radius:999px;
+      border:1px solid #263043; background:#121a27; color:#cfd6e4; font-size:12px;
+    }
+
+    @media (max-width: 960px){
+      .app{ grid-template-columns: 1fr; grid-template-rows: auto 60vh; }
+      .right{ height:60vh; }
+      textarea{ min-height: 24vh; }
+    }
   </style>
 </head>
 <body>
   <div class="app">
+    <!-- SOL (1/3) -->
     <section class="left">
       <div>
-        <h1>Atatürk</h1>
-        <div class="muted">Metindeki harfler, aynı klasördeki <strong>Atatürk</strong> görselinin şeklini alır.</div>
+        <h1>ASCII Atatürk</h1>
+        <p class="sub">Metindeki harfler, <strong>target.jpg</strong> görselinin şeklini alır.</p>
       </div>
-      <textarea id="textInput"> Ey Türk gençliği! Birinci vazifen; Türk istiklalini, Türk cumhuriyetini, ilelebet muhafaza ve müdafaa etmektir.
+
+      <div class="card">
+        <label for="textInput" class="hint">Metin (harfler buradan alınır):</label>
+        <textarea id="textInput" placeholder="Metni yazın..."> Ey Türk gençliği! Birinci vazifen; Türk istiklalini, Türk cumhuriyetini, ilelebet muhafaza ve müdafaa etmektir.
 
    Mevcudiyetinin ve istikbalinin yegâne temeli budur. Bu temel, senin en kıymetli hazinendir. İstikbalde dahi seni bu hazineden mahrum etmek isteyecek dâhilî ve haricî bedhahların olacaktır. Bir gün, istiklal ve cumhuriyeti müdafaa mecburiyetine düşersen, vazifeye atılmak için içinde bulunacağın vaziyetin imkân ve şeraitini düşünmeyeceksin. Bu imkân ve şerait, çok namüsait bir mahiyette tezahür edebilir. İstiklal ve cumhuriyetine kastedecek düşmanlar, bütün dünyada emsali görülmemiş bir galibiyetin mümessili olabilirler. Cebren ve hile ile aziz vatanın bütün kaleleri zapt edilmiş, bütün tersanelerine girilmiş, bütün orduları dağıtılmış ve memleketin her köşesi bilfiil işgal edilmiş olabilir. Bütün bu şeraitten daha elim ve daha vahim olmak üzere, memleketin dâhilinde iktidara sahip olanlar, gaflet ve dalalet ve hatta hıyanet içinde bulunabilirler. Hatta bu iktidar sahipleri, şahsi menfaatlerini müstevlilerin siyasi emelleriyle tevhit edebilirler. Millet, fakruzaruret içinde harap ve bitap düşmüş olabilir.
 
    Ey Türk istikbalinin evladı! İşte, bu ahval ve şerait içinde dahi vazifen, Türk istiklal ve cumhuriyetini kurtarmaktır. Muhtaç olduğun kudret, damarlarındaki asil kanda mevcuttur.</textarea>
-      <div class="actions">
-        <button id="startBtn">Başlat (4 sn)</button>
-        <button id="downloadBtn">PNG İndir</button>
+
+        <div class="controls">
+          <button id="startBtn">Başlat</button>
+          <button id="downloadBtn" title="Oluşan görseli PNG olarak indir">PNG İndir</button>
+          <span class="badge">Hedef: target.jpg</span>
+        </div>
+        <div class="hint">Not: <code>target.jpg</code> bu dosyayla aynı klasörde olmalı. Yüksek kontrastlı görsel en iyi sonucu verir.</div>
       </div>
-      <div class="muted">İpucu: Yüksek kontrastlı görseller en iyi sonucu verir. Dosya adını tam olarak <code>target.jpg</code> yapın.</div>
+
+      <div class="card" style="gap:8px">
+        <div class="hint">Ayarlar</div>
+        <div class="controls">
+          <label class="hint">Yoğunluk (STEP): <input id="stepInput" type="number" min="4" max="20" value="10" style="width:84px;background:#0d1117;color:var(--fg);border:1px solid #202634;border-radius:8px;padding:6px 8px"></label>
+          <label class="hint">Eşik (THRESH): <input id="threshInput" type="number" min="0" max="255" value="250" style="width:84px;background:#0d1117;color:var(--fg);border:1px solid #202634;border-radius:8px;padding:6px 8px"></label>
+          <label class="hint">Süre (ms): <input id="durInput" type="number" min="500" max="15000" step="100" value="2500" style="width:96px;background:#0d1117;color:var(--fg);border:1px solid #202634;border-radius:8px;padding:6px 8px"></label>
+        </div>
+      </div>
     </section>
+
+    <!-- SAĞ (2/3) -->
     <section class="right">
       <canvas id="cnv"></canvas>
     </section>
   </div>
 
   <script>
-    // ---------- Tuval / yerleşim ----------
+    // ---------- Yerleşim ----------
     const canvas = document.getElementById('cnv');
     const ctx = canvas.getContext('2d');
+    const leftPane = document.querySelector('.left');
     const rightPane = document.querySelector('.right');
-    let W=0,H=0,DPR=1;
-    function resize(){
+
+    let W=0, H=0, DPR=1;
+    function resizeCanvasToPane(){
       const r = rightPane.getBoundingClientRect();
-      DPR = Math.max(1, Math.min(2, window.devicePixelRatio||1));
-      canvas.style.width  = r.width + 'px';
+      DPR = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+      canvas.style.width = r.width + 'px';
       canvas.style.height = r.height + 'px';
-      canvas.width  = Math.floor(r.width * DPR);
+      canvas.width = Math.floor(r.width * DPR);
       canvas.height = Math.floor(r.height * DPR);
       ctx.setTransform(DPR,0,0,DPR,0,0);
       W = Math.floor(r.width);
@@ -63,289 +143,154 @@
       ctx.textBaseline = 'middle';
       ctx.lineJoin = 'round';
     }
-    window.addEventListener('resize', resize);
-    resize();
+    window.addEventListener('resize', resizeCanvasToPane);
+    resizeCanvasToPane();
 
     // ---------- Elemanlar ----------
     const textInput = document.getElementById('textInput');
     const startBtn  = document.getElementById('startBtn');
     const downloadBtn = document.getElementById('downloadBtn');
+    const stepInput = document.getElementById('stepInput');
+    const threshInput = document.getElementById('threshInput');
+    const durInput = document.getElementById('durInput');
 
-    // ---------- Sabitler ----------
-    const DURATION = 4000; // ms
-    const MAX_PARTICLES = 22000;
-    const EASE = t => 1 - Math.pow(1 - t, 3); // easeOutCubic
+    // ---------- Parametreler ----------
+    let DURATION = +durInput.value || 4000;
+    let STEP     = +stepInput.value || 7;
+    let THRESH   = +threshInput.value || 190;
+    const EASING   = t => 1 - Math.pow(1 - t, 3); // easeOutCubic
+    const MAX_PARTICLES = 20000;
 
-    // Katman örnekleme adımları (küçük = daha yoğun)
-    const STEP_DARK  = 6;   // koyu alan
-    const STEP_EDGE  = 8;   // kenar
-    const STEP_FILL  = 11;  // orta ton dolgu (seyrek)
+    stepInput.addEventListener('change', ()=> STEP = Math.max(4, +stepInput.value||7));
+    threshInput.addEventListener('change', ()=> THRESH = Math.min(255, Math.max(0, +threshInput.value||190)));
+    durInput.addEventListener('change', ()=> DURATION = Math.min(15000, Math.max(500, +durInput.value||4000)));
 
-    // Eşikler
-    const THRESH_DARK = 185; // luma < => seç
-    const THRESH_FILL = 205; // orta ton için üst eşik
-    const EDGE_THRESH = 40;  // sobel büyüklüğü eşiği (0-~1440 ölçekli; aşağıda normalize edeceğiz)
-
-    // ---------- Offscreen canvas'lar ----------
+    // ---------- Offscreen ----------
     const off = document.createElement('canvas');
     const offCtx = off.getContext('2d');
 
-    // Basit kutu bulanıklaştırma
-    function boxBlur(imgData, w, h, radius=1){
-      const out = new Uint8ClampedArray(imgData.length);
-      const tmp = new Uint8ClampedArray(imgData.length);
-      // yatay
-      const a = imgData;
-      const rsum = 1/(radius*2+1);
-      for(let y=0;y<h;y++){
-        let r=0,g=0,b=0,aSum=0;
-        let idx = y*w*4;
-        for(let x=-radius;x<=radius;x++){
-          const cx = Math.max(0, Math.min(w-1, x));
-          const i = (y*w + cx)*4;
-          r+=a[i]; g+=a[i+1]; b+=a[i+2]; aSum+=a[i+3];
-        }
-        tmp[idx]=r*rsum; tmp[idx+1]=g*rsum; tmp[idx+2]=b*rsum; tmp[idx+3]=aSum*rsum;
-        for(let x=1;x<w;x++){
-          let addx = Math.min(w-1, x+radius);
-          let subx = Math.max(0, x-1-radius);
-          let ai = (y*w+addx)*4, si=(y*w+subx)*4;
-          r += a[ai]-a[si]; g += a[ai+1]-a[si+1]; b += a[ai+2]-a[si+2]; aSum += a[ai+3]-a[si+3];
-          let o = (y*w+x)*4;
-          tmp[o]=r*rsum; tmp[o+1]=g*rsum; tmp[o+2]=b*rsum; tmp[o+3]=aSum*rsum;
-        }
-      }
-      // dikey
-      for(let x=0;x<w;x++){
-        let r=0,g=0,b=0,aSum=0;
-        for(let y=-radius;y<=radius;y++){
-          const cy = Math.max(0, Math.min(h-1, y));
-          const i = (cy*w + x)*4;
-          r+=tmp[i]; g+=tmp[i+1]; b+=tmp[i+2]; aSum+=tmp[i+3];
-        }
-        let idx = x*4;
-        out[idx]=r*rsum; out[idx+1]=g*rsum; out[idx+2]=b*rsum; out[idx+3]=aSum*rsum;
-        for(let y=1;y<h;y++){
-          let addy = Math.min(h-1, y+radius);
-          let suby = Math.max(0, y-1-radius);
-          let ai = (addy*w + x)*4, si=(suby*w + x)*4;
-          r += tmp[ai]-tmp[si]; g += tmp[ai+1]-tmp[si+1]; b += tmp[ai+2]-tmp[si+2]; aSum += tmp[ai+3]-tmp[si+3];
-          let o = (y*w + x)*4;
-          out[o]=r*rsum; out[o+1]=g*rsum; out[o+2]=b*rsum; out[o+3]=aSum*rsum;
-        }
-      }
-      return out;
-    }
-
-    // Sobel kenar büyüklüğü
-    function sobel(gray, w, h){
-      const out = new Float32Array(w*h);
-      const gxK = [-1,0,1,-2,0,2,-1,0,1];
-      const gyK = [-1,-2,-1,0,0,0,1,2,1];
-      for(let y=1;y<h-1;y++){
-        for(let x=1;x<w-1;x++){
-          let gx=0, gy=0, k=0;
-          for(let ky=-1; ky<=1; ky++){
-            for(let kx=-1; kx<=1; kx++){
-              const v = gray[(y+ky)*w + (x+kx)];
-              gx += v * gxK[k]; gy += v * gyK[k]; k++;
-            }
-          }
-          out[y*w+x] = Math.hypot(gx, gy); // büyüklük
-        }
-      }
-      return out;
-    }
-
-    // Kontrast germe (hafif)
-    function contrastStretch(gray){
-      let lo=255, hi=0;
-      for(let i=0;i<gray.length;i++){ const v=gray[i]; if(v<lo)lo=v; if(v>hi)hi=v; }
-      const range = Math.max(1, hi-lo);
-      const out = new Uint8ClampedArray(gray.length);
-      for(let i=0;i<gray.length;i++){
-        let v = (gray[i]-lo)*255/range;
-        // hafif S-eğrisi
-        const t = v/255; v = (t*t*(3-2*t))*255;
-        out[i]=v;
-      }
-      return out;
-    }
-
-    // Hedef resmi yükle
+    // ---------- Hedef görüntü ----------
+    let targetImg = null;
     function loadTarget(){
       return new Promise((resolve,reject)=>{
         const img = new Image();
         img.onload = ()=> resolve(img);
-        img.onerror = ()=> reject(new Error("target.jpg bulunamadı veya yüklenemedi."));
-        img.src = 'target.jpg?v=' + Date.now();
+        img.onerror = ()=> reject(new Error("target.jpg yüklenemedi. Dosyanın bu sayfayla aynı klasörde olduğundan emin olun."));
+        img.src = 'target.jpg'; // aynı origin
+        img.decoding = 'async';
+        img.crossOrigin = 'anonymous'; // aynı origin olduğu sürece sorun olmaz
       });
     }
 
-    // Parçacık üretimi (adaptif, 3 katman)
-    function buildParticles(img, text){
-      // Sağ panel içine sığdır
-      const scale = Math.min(W/img.width, H/img.height, 1);
-      const w = Math.floor(img.width * scale);
-      const h = Math.floor(img.height * scale);
-      const ox = Math.floor((W - w)/2);
-      const oy = Math.floor((H - h)/2);
+    // ---------- Parçacıklar ----------
+    let particles = [];
+    let animStart = 0;
+    let running = false;
 
-      off.width = w; off.height = h;
-      offCtx.clearRect(0,0,w,h);
-      offCtx.drawImage(img, 0, 0, w, h);
-      const imgData = offCtx.getImageData(0,0,w,h);
-      const data = imgData.data;
+    startBtn.addEventListener('click', async ()=>{
+      const txt = (textInput.value || '').trim();
+      if(!txt){ alert('Lütfen metin giriniz.'); return; }
 
-      // 1) Gray
-      const gray = new Uint8ClampedArray(w*h);
-      for(let i=0, j=0; i<data.length; i+=4, j++){
-        const r=data[i], g=data[i+1], b=data[i+2];
-        gray[j] = (0.2126*r + 0.7152*g + 0.0722*b) | 0;
+      try {
+        if(!targetImg) targetImg = await loadTarget();
+        prepareTargetsFromImage(targetImg, txt);
+        startAnimation();
+      } catch(err){
+        alert(err.message || err);
       }
+    });
 
-      // 2) Kontrast + hafif blur (noise temizle)
-      const stretched = contrastStretch(gray);
-      const blurredRGBA = boxBlur(imgData.data, w, h, 1); // radius=1
-      // Blur sonrası yeniden luma
-      const grayB = new Uint8ClampedArray(w*h);
-      for(let i=0, j=0; i<blurredRGBA.length; i+=4, j++){
-        const r=blurredRGBA[i], g=blurredRGBA[i+1], b=blurredRGBA[i+2];
-        grayB[j] = (0.2126*r + 0.7152*g + 0.0722*b) | 0;
-      }
+    function prepareTargetsFromImage(img, text){
+      // Görseli sağ panel içine orantılı sığdır
+      const scale = Math.min(W / img.width, H / img.height, 1);
+      const drawW = Math.floor(img.width * scale);
+      const drawH = Math.floor(img.height * scale);
+      const dx = Math.floor((W - drawW)/2), dy = Math.floor((H - drawH)/2);
 
-      // 3) Kenar büyüklüğü (Sobel)
-      const edgeMag = sobel(stretched, w, h);
-      // Normalize kenar
-      let eMax = 0; for(let i=0;i<edgeMag.length;i++) if(edgeMag[i]>eMax) eMax=edgeMag[i];
-      const eScale = eMax>0 ? (255/eMax) : 1;
+      off.width = drawW; off.height = drawH;
+      offCtx.clearRect(0,0,drawW,drawH);
+      offCtx.drawImage(img, 0, 0, drawW, drawH);
 
+      const { data } = offCtx.getImageData(0,0,drawW,drawH);
       const pts = [];
-
-      // Koyu alan katmanı (yoğun)
-      for(let y=0;y<h;y+=STEP_DARK){
-        for(let x=0;x<w;x+=STEP_DARK){
-          const idx = y*w + x;
-          if(grayB[idx] < THRESH_DARK){
-            const i4 = idx*4;
-            const r=data[i4], g=data[i4+1], b=data[i4+2], a=data[i4+3];
-            if(a>10){
-              pts.push({x:ox+x, y:oy+y, color:`rgb(${r},${g},${b})`});
-            }
+      for(let y=0; y<drawH; y+=STEP){
+        for(let x=0; x<drawW; x+=STEP){
+          const idx = (y*drawW + x)*4;
+          const r=data[idx], g=data[idx+1], b=data[idx+2], a=data[idx+3];
+          if(a<8) continue;
+          const lum = 0.2126*r + 0.7152*g + 0.0722*b;
+          if(lum < THRESH){
+            pts.push({ x: dx+x, y: dy+y, color:`rgb(${r},${g},${b})` });
           }
         }
       }
-
-      // Kenar katmanı (orta yoğunluk)
-      for(let y=1;y<h-1;y+=STEP_EDGE){
-        for(let x=1;x<w-1;x+=STEP_EDGE){
-          const idx = y*w + x;
-          const emag = edgeMag[idx]*eScale; // 0..255
-          if(emag > EDGE_THRESH){
-            const i4 = idx*4;
-            const r=data[i4], g=data[i4+1], b=data[i4+2], a=data[i4+3];
-            if(a>10){
-              // Kenarda hafif jitter ile yerleşim
-              const jx = (Math.random()*2-1)*0.8;
-              const jy = (Math.random()*2-1)*0.8;
-              pts.push({x:ox+x+jx, y:oy+y+jy, color:`rgb(${r},${g},${b})`});
-            }
-          }
-        }
-      }
-
-      // Orta ton dolgu (seyrek)
-      for(let y=0;y<h;y+=STEP_FILL){
-        for(let x=0;x<w;x+=STEP_FILL){
-          const idx = y*w + x;
-          const l = grayB[idx];
-          if(l >= THRESH_DARK && l < THRESH_FILL){
-            const i4 = idx*4;
-            const r=data[i4], g=data[i4+1], b=data[i4+2], a=data[i4+3];
-            if(a>10){
-              pts.push({x:ox+x, y:oy+y, color:`rgb(${r},${g},${b})`});
-            }
-          }
-        }
-      }
-
-      // Çok fazlaysa kırp
       let targets = pts;
       if(targets.length > MAX_PARTICLES){
         const ratio = MAX_PARTICLES / targets.length;
-        targets = targets.filter(()=> Math.random()<ratio);
+        targets = targets.filter(()=> Math.random() < ratio);
       }
 
-      // Harf döngüsü
-      const letters = Array.from((text||' ').replace(/\s+/g,' '));
+      const letters = Array.from(text.replace(/\s+/g,' ').trim());
       const L = Math.max(1, letters.length);
 
-      // Parçacıklar
-      const particles = targets.map((t,i)=>{
+      particles = targets.map((t,i)=>{
         const ch = letters[i % L];
         const sx = Math.random()*W, sy = Math.random()*H;
-        return { ch, color:t.color, tx:t.x, ty:t.y, sx, sy };
+        return { ch, color:t.color, tx:t.x+(Math.random()*2-1)*0.6, ty:t.y+(Math.random()*2-1)*0.6, sx, sy };
       });
-
-      return particles;
     }
-
-    let particles = [];
-    let running=false, t0=0;
 
     function startAnimation(){
       running = true;
-      t0 = performance.now();
+      animStart = performance.now();
       requestAnimationFrame(tick);
     }
 
     function tick(now){
       if(!running) return;
-      const p = Math.min(1, (now - t0)/DURATION);
-      const e = EASE(p);
+      const elapsed = now - animStart;
+      const t = Math.min(1, elapsed / DURATION);
+      const e = EASING(t);
 
       ctx.clearRect(0,0,W,H);
 
-      // Harf boyutu: yoğunluğa göre dengeli
-      const fontPx = 12; // sabit ve okunaklı (minimal yaklaşım)
-      ctx.font = `700 ${fontPx}px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial`;
+      // Dinamik font ölçüsü: yoğunluğa göre okunabilirlik
+      const fontPx = Math.max(10, STEP + 3);
+      ctx.font = `bold ${fontPx}px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial`;
       ctx.textAlign = 'center';
 
-      for(const P of particles){
-        const x = P.sx + (P.tx - P.sx)*e;
-        const y = P.sy + (P.ty - P.sy)*e;
-        ctx.fillStyle = P.color;
-        ctx.fillText(P.ch, x, y);
+      for(const p of particles){
+        const x = p.sx + (p.tx - p.sx) * e;
+        const y = p.sy + (p.ty - p.sy) * e;
+        ctx.fillStyle = p.color;
+        ctx.fillText(p.ch, x, y);
       }
 
-      if(p<1) requestAnimationFrame(tick);
-      else running=false;
+      if(t<1) requestAnimationFrame(tick);
+      else running = false;
     }
 
-    // ---------- Olaylar ----------
-    startBtn.addEventListener('click', async ()=>{
-      const txt = (textInput.value||'').trim();
-      if(!txt){ alert('Lütfen metin giriniz.'); return; }
-      try{
-        const img = await loadTarget();
-        particles = buildParticles(img, txt);
-        startAnimation();
-      }catch(err){
-        alert(err.message||err);
-      }
-    });
-
+    // PNG indirme
     downloadBtn.addEventListener('click', ()=>{
-      if(canvas.width===0||canvas.height===0){ alert('Henüz görsel oluşturulmadı.'); return; }
+      if(canvas.width === 0 || canvas.height === 0){
+        alert('Henüz bir görsel oluşturulmadı.');
+        return;
+      }
       canvas.toBlob(blob=>{
-        if(!blob){ alert('PNG oluşturulamadı.'); return; }
+        if(!blob){ alert('İndirme hazırlanırken bir sorun oluştu.'); return; }
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
-        a.href = url; a.download = 'harflerle-gorsel.png';
-        document.body.appendChild(a); a.click(); a.remove();
+        a.href = url;
+        a.download = 'harflerle-gorsel.png';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
         URL.revokeObjectURL(url);
       }, 'image/png', 1.0);
     });
+
+    // İlk yüklemede hedefi arka planda ısıt
+    loadTarget().then(img=>{ targetImg = img; }).catch(()=>{ /* sessiz geç */ });
   </script>
 </body>
 </html>
